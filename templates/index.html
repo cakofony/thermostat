@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css">
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                var tempout = document.getElementById("tempout");
+                var slidemin = document.getElementById("mintemp");
+                var slidemax = document.getElementById("maxtemp");
+                var lastmin = slidemin.value;
+                var lastmax = slidemax.value;
+
+                function minchange() {
+                    var newval = slidemin.value;
+                    if (lastmin != newval) {
+                        ws.send(JSON.stringify({'min': newval}));
+                        lastmin = newval;
+                    }
+                };
+
+                function maxchange() {
+                    var newval = slidemax.value;
+                    if (lastmax != newval) {
+                        ws.send(JSON.stringify({'max': newval}));
+                        lastmax = newval;
+                    }
+                };
+
+                if ("WebSocket" in window) {
+                    ws = new WebSocket("ws://" + document.domain + ":5000/websocket");
+
+                    ws.onmessage = function (msg) {
+                        var message = JSON.parse(msg.data);
+                        if ("temp" in message) {
+                            tempout.innerHTML = message.temp;
+                        }
+                        if ("active" in message) {
+                            var color;
+                            if (message.active == 'heat') {
+                                color="#ff8c69";
+                            }
+                            if (message.active == 'cool') {
+                                color="#9bc4e2";
+                            }
+                            if (message.active == 'off') {
+                                color="#fef1b5";
+                            }
+                            $("#page").css("background", color);
+                        }
+                        if ("mintemp" in message) {
+                            $("#mintemp").off('change');
+                            $("#mintemp").val(parseFloat(message.mintemp)).slider("refresh");
+                            $("#mintemp").change(minchange);
+                        }
+                        if ("maxtemp" in message) {
+                            $("#maxtemp").off('change');
+                            $("#maxtemp").val(parseFloat(message.maxtemp)).slider("refresh");
+                            $("#maxtemp").change(maxchange);
+                        }
+                        if ("system" in message) {
+                            $("select#togglesystem").val(message.system).slider("refresh");
+                        }
+                        if ("fan" in message) {
+                            $("select#togglefan").val(message.fan).slider("refresh");
+                        }
+                    };
+                };
+
+                $("#togglesystem").change(function() {
+                    ws.send(JSON.stringify({'system': $("select#togglesystem").val()}));
+                });
+
+                $("#togglefan").change(function() {
+                    ws.send(JSON.stringify({'fan': $("select#togglefan").val()}));
+                });
+
+                $("#mintemp").change(minchange);
+
+                $("#maxtemp").change(maxchange);
+
+                // Cleanly close websocket when unload window
+                window.onbeforeunload = function() {
+                    ws.onclose = function () {}; // disable onclose handler first
+                    ws.close()
+                };
+            }); 
+        </script>
+    </head>
+    <body>
+
+        <div id="page" data-role="page">
+            <div data-role="header">
+                <h1>Thermostat</h1>
+            </div>
+            <div id="sliderdiv" data-role="rangeslider">
+                <input type="range" name="range-10a" id="mintemp" min="60" max="80" step=".1" value="70.0">
+                <input type="range" name="range-10b" id="maxtemp" min="60" max="80" step=".1" value="74.0">
+            </div>
+
+            <h1 id="tempout" style="text-align: center;"> -30&deg; F </h1>
+            <div class="ui-grid-a">
+                <div class="ui-block-a" style="text-align: center;">
+                    <div data-role="fieldcontain" id="togglesystem">
+                        <h3>System</h3>
+                        <select name="toggleswitch3" id="togglesystem" data-theme="" data-role="slider">
+                            <option id="sysoff" value="off">Off</option>
+                            <option id="syson" value="on">On</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ui-block-b" style="text-align: center;">
+                    <div data-role="fieldcontain" id="togglefan">
+                        <h3>Fan</h3>
+                        <select name="toggleswitch4" id="togglefan" data-theme="" data-role="slider">
+                            <option id="fanoff" value="off">Off</option>
+                            <option id="fanon" value="on">On</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
