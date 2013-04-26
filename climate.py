@@ -14,7 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-class ClimateControlSingleton:
+from observable import Observable
+
+class ClimateControlSingleton(Observable):
     _instance = None
 
     fan = False
@@ -24,8 +26,18 @@ class ClimateControlSingleton:
     #singleton magic
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(ThermometerSingleton, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(ClimateControlSingleton, cls).__new__(cls, *args, **kwargs)
         return cls._instance
+
+    def notify_observers(self):
+        if self.ac:
+            result = 'cool'
+        elif self.heat:
+            result = 'heat'
+        else:
+            result = 'off'
+        for o in self.observers:
+            o.update_active(result)
 
     def fan_on(self):
         self.fan = True
@@ -39,6 +51,7 @@ class ClimateControlSingleton:
     
     def heat_off(self):
         self.heat = False
+        self.notify_observers()
         #pgio
 
     def ac_on(self):
@@ -54,13 +67,16 @@ class ClimateControlSingleton:
         self.heat_off()
         self.ac_on()
         self.fan_on()
+        self.notify_observers()
 
     #if heat or ac are on, we ALWAYS want to start the fan
     def set_heat_on(self):
-        self.heat_on()
         self.ac_off()
+        self.heat_on()
         self.fan_on()
+        self.notify_observers()
 
     def set_off(self):
         self.ac_off()
         self.heat_off()
+        self.notify_observers()

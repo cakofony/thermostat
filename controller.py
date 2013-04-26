@@ -40,6 +40,10 @@ class ThermostatController:
         #set up climate control
         self.climate_control = ClimateControlSingleton()
 
+        self.climate_control.register_observer(thermweb)
+        self.climate_control.notify_observers()
+        #^ otherwise web doesn't know status until a change is made
+
         self.config = Settings()
         self.config.register_observer(thermweb)
         thermweb.conf = self.config
@@ -86,13 +90,6 @@ class ThermostatController:
                 self.climate_control.fan_off()
         if self.config.fan:
             self.climate_control.fan_on()
-
-        active = 'off'
-        if self.climate_control.heat:
-            active = 'heat'
-        elif self.climate_control.ac:
-            active = 'cool'
-        thermweb.broadcast({'active':active})
 
     def settings_changed(self):
         self.evaluate_control()

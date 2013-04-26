@@ -26,7 +26,8 @@ import threading
 
 lock = threading.Lock()
 websockets = set([])
-conf = None
+conf = None #settings object gets put here
+current_values = {'temp':0, 'active':'off'}
 
 def broadcast(data):
     toremove = []
@@ -49,8 +50,12 @@ def broadcast(data):
 def settings_changed():
     broadcast(conf.to_dict())
 
+def update_active(new_active):
+    current_values['active'] = new_active
+    broadcast({'active':new_active})
 
 def update_temperature(temp):
+    current_values['temp'] = temp
     broadcast({'temp': str(temp)+'&deg; F'})
 
 def handle_websocket(ws):
@@ -84,6 +89,8 @@ def therm_app(environ, start_response):
         if not ws in websockets:
             websockets.add(ws)
             tmpdict = conf.to_dict()
+            tmpdict['active'] = current_values['active']
+            tmpdict['temp'] = current_values['temp']
             if "source" in tmpdict:
                 del tmpdict["source"]
             ws.send(json.dumps(tmpdict))
