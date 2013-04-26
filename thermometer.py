@@ -38,8 +38,6 @@ class ThermometerSingleton(Observable):
         super(ThermometerSingleton,self).__init__()
         self.update_interval = update_interval
 
-        os.system('modprobe w1-gpio')
-        os.system('modprobe w1-therm')
         base_dir = '/sys/bus/w1/devices/'
         device_folder = glob.glob(base_dir + '28*')[0]
         self.device_file = device_folder + '/w1_slave'
