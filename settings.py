@@ -20,16 +20,18 @@ from observable import Observable
 import thread
 
 class Settings(Observable):
-
+    source = None
     def __init__(self):
         super(Settings, self).__init__()
         try:
             self.read()
+            self.source=None
         except:
             self.mint = 70
             self.maxt=74
             self.fan=False
             self.system=True
+            self.source=None
 
     def notify_observers(self):
         for o in self.observers:
