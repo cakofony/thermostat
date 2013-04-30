@@ -53,7 +53,7 @@ class ThermometerSingleton(Observable):
         while lines[0].strip()[-3:] != 'YES':
             print 'Error reading temp'
             time.sleep(0.2)
-            lines = read_temp_raw()
+            lines = self.read_temp_raw()
         equals_pos = lines[1].find('t=')
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
