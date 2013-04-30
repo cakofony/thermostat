@@ -50,7 +50,7 @@ class ThermostatController:
         self.config.register_observer(self)
         self.thermometer.register_observer(self)
 
-        self.http_server = WSGIServer(('0.0.0.0',5000), therm_app, handler_class=WebSocketHandler)
+        self.http_server = WSGIServer(('0.0.0.0', 80), therm_app, handler_class=WebSocketHandler)
 
         try:
             self.http_server.serve_forever()
