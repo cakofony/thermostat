@@ -9,11 +9,11 @@ class LCDPlate():
         self.lcd.backlight(lcd.ON)
 
     def update_active(self, result):
-        if result = 'cool':
+        if result == 'cool':
             self.lcd.backlight(self.lcd.BLUE)
-        elif result = 'heat':
+        elif result == 'heat':
             self.lcd.backlight(self.lcd.RED)
-        elif result = 'off':
+        elif result == 'off':
             self.lcd.backlifht(self.lcd.ON)
 
     def update_temperature(self, temp):
