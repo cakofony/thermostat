@@ -22,6 +22,7 @@ from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 import thermweb
 from thermweb import therm_app
+from lcd_display import LCDPlate
 
 class ThermostatController:
 
@@ -49,6 +50,10 @@ class ThermostatController:
         thermweb.conf = self.config
         self.config.register_observer(self)
         self.thermometer.register_observer(self)
+        
+        self.lcd = LCDPlate()
+        self.climate_control.register_observer(self.lcd)
+        self.thermometer.register_observer(self.lcd)
 
         self.http_server = WSGIServer(('0.0.0.0', 5000), therm_app, handler_class=WebSocketHandler)
 
