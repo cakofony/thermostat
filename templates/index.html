@@ -32,7 +32,6 @@
 
                 if ("WebSocket" in window) {
                     ws = new WebSocket("ws://" + document.domain + ":80/websocket");
-
                     ws.onmessage = function (msg) {
                         var message = JSON.parse(msg.data);
                         if ("temp" in message) {
