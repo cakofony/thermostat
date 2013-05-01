@@ -31,6 +31,7 @@ class ClimateControlSingleton(Observable):
         return cls._instance
 
     def __init__(self):
+        super(ClimateControlSingleton,self).__init__()
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(17, GPIO.OUT)
         GPIO.setup(27, GPIO.OUT)
