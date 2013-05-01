@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from observable import Observable
+import RPi.GPIO as GPIO
 
 class ClimateControlSingleton(Observable):
     _instance = None
@@ -29,6 +30,12 @@ class ClimateControlSingleton(Observable):
             cls._instance = super(ClimateControlSingleton, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(17, GPIO.OUT)
+        GPIO.setup(27, GPIO.OUT)
+        GPIO.setup(22, GPIO.OUT)
+
     def notify_observers(self):
         if self.ac:
             result = 'cool'
@@ -40,27 +47,33 @@ class ClimateControlSingleton(Observable):
             o.update_active(result)
 
     def fan_on(self):
+        GPIO.output(17, GPIO.HIGH)
         self.fan = True
 
     def fan_off(self):
+        GPIO.output(17, GPIO.LOW)
         self.fan = False
 
     def heat_on(self):
+        GPIO.output(22, GPIO.LOW)
+        self.ac = False
+        GPIO.output(27, GPIO.HIGH)
         self.heat = True
-        #pgio
     
     def heat_off(self):
+        GPIO.output(27, GPIO.LOW)
         self.heat = False
         self.notify_observers()
-        #pgio
 
     def ac_on(self):
+        GPIO.output(27, GPIO.LOW)
+        self.heat = False
+        GPIO.output(22, GPIO.HIGH)
         self.ac = True
-        #pgio
 
     def ac_off(self):
+        GPIO.output(22, GPIO.LOW)
         self.ac = False
-        #pgio
 
     #if heat or ac are on, we ALWAYS want to start the fan
     def set_ac_on(self):
