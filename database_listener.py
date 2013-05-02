@@ -3,10 +3,11 @@ from sqlalchemy import create_engine, MetaData, Table, Column
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, DATETIME, BOOLEAN
 import datetime
+import ConfigParser
 
-DB_NAME = '127.0.0.1/localdb'
-DB_USER = 'root'
-DB_PASS = 'c4kofony'
+DB_NAME = ''
+DB_USER = ''
+DB_PASS = ''
 
 TEMP_TABLE = 'temperature'
 SETTINGS_TABLE = 'settings'
@@ -17,6 +18,11 @@ class DatabaseListener:
     def __init__(self):
         self.setup_db()
         self.build_tables()
+        cfgparser = ConfigParser.ConfigParser()
+        cfgparser.readfp(open('database.cfg'))
+        DB_NAME = cfgparser['database']['address']
+        DB_USER = cfgparser['database']['username']
+        DB_PASS = cfgparser['database']['password']
 
     def setup_db(self):
         try:
