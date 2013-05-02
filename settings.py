@@ -35,7 +35,7 @@ class Settings(Observable):
 
     def notify_observers(self):
         for o in self.observers:
-            o.settings_changed()
+            o.settings_changed(self)
 
     def set_all(self, mint, maxt, fan, system, source=None):
         self.mint = mint

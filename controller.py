@@ -100,7 +100,7 @@ class ThermostatController:
         elif not (self.climate_control.ac or self.climate_control.heat):
             self.climate_control.fan_off()
 
-    def settings_changed(self):
+    def settings_changed(self, config):
         self.evaluate_control()
 
     def update_temperature(self, temp):

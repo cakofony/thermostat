@@ -47,7 +47,8 @@ def broadcast(data):
     finally:
         lock.release()
 
-def settings_changed():
+def settings_changed(new_conf):
+    conf = new_conf
     broadcast(conf.to_dict())
 
 def update_active(new_active):
@@ -56,7 +57,7 @@ def update_active(new_active):
 
 def update_temperature(temp):
     current_values['temp'] = temp
-    broadcast({'temp': str(temp)+'&deg; F'})
+    broadcast({'temp': '%.1f&deg; F' % temp})
 
 def handle_websocket(ws):
     while True:
