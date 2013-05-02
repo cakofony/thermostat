@@ -51,7 +51,7 @@ def settings_changed(new_conf):
     conf = new_conf
     broadcast(conf.to_dict())
 
-def update_active(new_active):
+def update_active(new_active, heat, cool, fan):
     current_values['active'] = new_active
     broadcast({'active':new_active})
 
@@ -91,7 +91,7 @@ def therm_app(environ, start_response):
             websockets.add(ws)
             tmpdict = conf.to_dict()
             tmpdict['active'] = current_values['active']
-            tmpdict['temp'] = current_values['temp']
+            tmpdict['temp'] = '%.1f&deg; F' % current_values['temp']
             if "source" in tmpdict:
                 del tmpdict["source"]
             ws.send(json.dumps(tmpdict))

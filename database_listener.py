@@ -55,6 +55,20 @@ class DatabaseListener:
     def get_table(self, table_name):
         return Table(table_name, self.meta, autoload=True)
 
-    
-db = DatabaseLogger()
+    def update_temperature(self, temp):
+        self.engine.execute(self.temperature.insert(), temperature=temp)
+
+    def settings_changed(self, conf):
+        self.engine.execute(self.settings.insert(), min_temp=conf.mint, max_temp=conf.maxt, system=conf.system, fan=conf.fan)
+
+    def update_active(self, result, heat, cool, fan):
+        self.engine.execute(self.climate.insert(), fan=fan, heat=heat, ac=cool)
+
+db = DatabaseListener()
+db.update_temperature(50.123)
+from settings import Settings
+s = Settings()
+s.register_observer(db)
+s.set_all(60, 70, False, True)
+db.update_active('meh', True, False, True)
 db.teardown_db()

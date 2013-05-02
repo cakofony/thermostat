@@ -45,7 +45,7 @@ class ClimateControlSingleton(Observable):
         else:
             result = 'off'
         for o in self.observers:
-            o.update_active(result)
+            o.update_active(result, self.heat, self.cool, self.fan)
 
     def fan_on(self):
         GPIO.output(17, GPIO.HIGH)
