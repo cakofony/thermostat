@@ -24,6 +24,8 @@ import thermweb
 from thermweb import therm_app
 from lcd_display import LCDPlate
 
+MAX_THRESHOLD = 2
+
 class ThermostatController:
 
     temp = -30
@@ -75,7 +77,7 @@ class ThermostatController:
                 self.target_heat = True
                 self.climate_control.set_heat_on()
             elif self.target_heat:
-                if temp >= min((mi*2+ma)/3, mi+2):
+                if temp >= min((mi*2+ma)/3, mi+MAX_THRESHOLD):
                     self.target_heat = False
                     self.climate_control.set_off()
                     if not self.config.fan:
@@ -84,17 +86,17 @@ class ThermostatController:
                 self.target_cool = True
                 self.climate_control.set_ac_on()
             elif self.target_cool:
-                if temp <= max((ma*2+mi)/3, ma-2):
+                if temp <= max((ma*2+mi)/3, ma-MAX_THRESHOLD):
                     self.target_cool = False
                     self.climate_control.set_off()
                     if not self.config.fan:
                         self.climate_control.fan_off()
         else:
             self.climate_control.set_off()
-            if not self.config.fan:
-                self.climate_control.fan_off()
-        if self.config.fan:
-            self.climate_control.fan_on()
+            if self.config.fan:
+                self.climate_control.fan_on()
+            else:
+                self.climate_control.fan_ff()
 
     def settings_changed(self):
         self.evaluate_control()
