@@ -66,6 +66,7 @@ class ThermostatController:
             self.config.save()
             self.thermometer.running = False
             self.thermometer.remove_observer(thermweb)
+            self.lcd.off()
 
     def evaluate_control(self):
         temp = self.temp
@@ -93,10 +94,11 @@ class ThermostatController:
                         self.climate_control.fan_off()
         else:
             self.climate_control.set_off()
-            if self.config.fan:
-                self.climate_control.fan_on()
-            else:
-                self.climate_control.fan_ff()
+        
+        if self.config.fan:
+            self.climate_control.fan_on()
+        elif not (self.climate_control.ac or self.climate_control.heat):
+            self.climate_control.fan_off()
 
     def settings_changed(self):
         self.evaluate_control()

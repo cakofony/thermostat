@@ -6,7 +6,7 @@ class LCDPlate():
         self.lcd = Adafruit_CharLCDPlate()
         self.lcd.begin(16, 2)
         self.lcd.clear()
-        self.lcd.backlight(self.lcd.ON)
+        self.lcd.backlight(self.lcd.OFF)
 
     def update_active(self, result):
         if result == 'cool':
@@ -14,8 +14,12 @@ class LCDPlate():
         elif result == 'heat':
             self.lcd.backlight(self.lcd.RED)
         elif result == 'off':
-            self.lcd.backlight(self.lcd.ON)
+            self.lcd.backlight(self.lcd.OFF)
 
     def update_temperature(self, temp):
         self.lcd.clear()
         self.lcd.message("Temp: %.1fF" % temp)
+
+    def off(self):
+        self.lcd.backlight(self.lcd.OFF)
+        self.lcd.clear()
