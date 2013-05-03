@@ -62,11 +62,16 @@ class ThermostatController:
         try:
             self.http_server.serve_forever()
         except KeyboardInterrupt:
-            print '\nClosing\n'
-            self.config.save()
-            self.thermometer.running = False
-            self.thermometer.remove_observer(thermweb)
-            self.lcd.off()
+            self.close_nicely()
+        except:
+            self.close_nicely()
+
+    def close_nicely(self):
+        print '\nClosing\n'
+        self.config.save()
+        self.thermometer.running = False
+        self.thermometer.remove_observer(thermweb)
+        self.lcd.off()
 
     def evaluate_control(self):
         temp = self.temp

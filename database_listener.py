@@ -4,29 +4,26 @@ from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.dialects.mysql import FLOAT, INTEGER, DATETIME, BOOLEAN
 import datetime
 import ConfigParser
+import sys
 
-DB_NAME = ''
-DB_USER = ''
-DB_PASS = ''
 
 TEMP_TABLE = 'temperature'
 SETTINGS_TABLE = 'settings'
 CLIMATE_CONTROL_TABLE = 'climatecontrol'
-
 class DatabaseListener:
 
     def __init__(self):
-        self.setup_db()
-        self.build_tables()
         cfgparser = ConfigParser.ConfigParser()
         cfgparser.readfp(open('database.cfg'))
-        DB_NAME = cfgparser['database']['address']
-        DB_USER = cfgparser['database']['username']
-        DB_PASS = cfgparser['database']['password']
+        self.DB_NAME = cfgparser.get('database', 'address')
+        self.DB_USER = cfgparser.get('database', 'username')
+        self.DB_PASS = cfgparser.get('database', 'password')
+        self.setup_db()
+        self.build_tables()
 
     def setup_db(self):
         try:
-            self.engine = create_engine('mysql://%s:%s@%s?charset=utf8&use_unicode=0' % (DB_USER, DB_PASS, DB_NAME))
+            self.engine = create_engine('mysql://%s:%s@%s?charset=utf8&use_unicode=0' % (self.DB_USER, self.DB_PASS, self.DB_NAME))
             self.connection = self.engine.connect()
             self.meta = MetaData()
             self.meta.bind = self.connection
