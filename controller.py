@@ -28,12 +28,15 @@ MAX_THRESHOLD = 2
 
 class ThermostatController:
 
-    temp = -30
+    temp = None
     target_heat = False
     target_cool = False
     config = None
 
     def evaluate_control(self):
+        if temp is None: #before we read the thermometer, we don't want to cycle AC
+            return
+
         temp = self.temp
         mi = self.config.mint
         ma = self.config.maxt
