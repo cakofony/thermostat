@@ -34,7 +34,7 @@ class ThermostatController:
     config = None
 
     def evaluate_control(self):
-        if temp is None: #before we read the thermometer, we don't want to cycle AC
+        if self.temp is None: #before we read the thermometer, we don't want to cycle AC
             return
 
         temp = self.temp
