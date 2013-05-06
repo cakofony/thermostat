@@ -28,6 +28,7 @@ thermometer.register_observer(lcd)
 climate_control.notify_observers()
 
 control = ThermostatController()
+control.climate_control = climate_control
 thermometer.register_observer(control)
 config.register_observer(control)
 config.notify_observers()
