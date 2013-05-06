@@ -31,6 +31,7 @@ class ThermostatController:
     temp = -30
     target_heat = False
     target_cool = False
+    config = None
 
     def evaluate_control(self):
         temp = self.temp
@@ -67,6 +68,7 @@ class ThermostatController:
             self.climate_control.fan_off()
 
     def settings_changed(self, config):
+        self.config = config
         self.evaluate_control()
 
     def update_temperature(self, temp):

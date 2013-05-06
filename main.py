@@ -30,6 +30,7 @@ climate_control.notify_observers()
 control = ThermostatController()
 thermometer.register_observer(control)
 config.register_observer(control)
+config.notify_observers()
 
 http_server = WSGIServer(('0.0.0.0', 5000), therm_app, handler_class=WebSocketHandler)
 
