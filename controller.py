@@ -32,47 +32,6 @@ class ThermostatController:
     target_heat = False
     target_cool = False
 
-    def __init__(self):
-        #thermostat setup
-        self.thermometer = ThermometerSingleton(1)
-        self.thermometer.register_observer(thermweb)
-        self.thermometer.running = True
-        self.thermometer.start()
-
-
-        #set up climate control
-        self.climate_control = ClimateControlSingleton()
-
-        self.climate_control.register_observer(thermweb)
-        self.climate_control.notify_observers()
-        #^ otherwise web doesn't know status until a change is made
-
-        self.config = Settings()
-        self.config.register_observer(thermweb)
-        thermweb.conf = self.config
-        self.config.register_observer(self)
-        self.thermometer.register_observer(self)
-        
-        self.lcd = LCDPlate()
-        self.climate_control.register_observer(self.lcd)
-        self.thermometer.register_observer(self.lcd)
-
-        self.http_server = WSGIServer(('0.0.0.0', 5000), therm_app, handler_class=WebSocketHandler)
-
-        try:
-            self.http_server.serve_forever()
-        except KeyboardInterrupt:
-            self.close_nicely()
-        except:
-            self.close_nicely()
-
-    def close_nicely(self):
-        print '\nClosing\n'
-        self.config.save()
-        self.thermometer.running = False
-        self.thermometer.remove_observer(thermweb)
-        self.lcd.off()
-
     def evaluate_control(self):
         temp = self.temp
         mi = self.config.mint
@@ -98,6 +57,8 @@ class ThermostatController:
                     if not self.config.fan:
                         self.climate_control.fan_off()
         else:
+            target_heat = False
+            target_cool = False
             self.climate_control.set_off()
         
         if self.config.fan:
@@ -111,6 +72,3 @@ class ThermostatController:
     def update_temperature(self, temp):
         self.temp = temp
         self.evaluate_control()
-        
-
-control = ThermostatController()
