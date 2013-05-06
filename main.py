@@ -2,7 +2,7 @@ from climate import ClimateControlSingleton
 from thermometer import ThermometerSingleton
 from settings import Settings
 from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandle
+from geventwebsocket.handler import WebSocketHandler
 import thermweb
 from thermweb import therm_app
 from lcd_display import LCDPlate
