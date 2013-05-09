@@ -38,6 +38,7 @@ http_server = WSGIServer(('0.0.0.0', 80), therm_app, handler_class=WebSocketHand
 def close_nicely():
     print '\nClosing\n'
     config.save()
+    climate_control.all_off()
     thermometer.running = False
     thermometer.remove_observer(thermweb)
     lcd.off()

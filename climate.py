@@ -94,3 +94,7 @@ class ClimateControlSingleton(Observable):
         self.ac_off()
         self.heat_off()
         self.notify_observers()
+    
+    def all_off(self):
+        self.fan_off()
+        self.set_off()
