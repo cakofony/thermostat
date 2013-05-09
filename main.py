@@ -33,7 +33,7 @@ thermometer.register_observer(control)
 config.register_observer(control)
 config.notify_observers()
 
-http_server = WSGIServer(('0.0.0.0', 5000), therm_app, handler_class=WebSocketHandler)
+http_server = WSGIServer(('0.0.0.0', 80), therm_app, handler_class=WebSocketHandler)
 
 def close_nicely():
     print '\nClosing\n'
