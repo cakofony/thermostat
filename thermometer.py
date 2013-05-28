@@ -69,7 +69,7 @@ class ThermometerSingleton(Observable):
     def get_temp(self):
         self.temperatures.append(self.get_one_temp())
         self.temperatures = self.temperatures[len(self.temperatures) - min(len(self.temperatures), NUM_OF_TEMPS):]
-        return sum(self.temperatures) / float(len(temperatures))
+        return sum(self.temperatures) / float(len(self.temperatures))
 
     def notify_observers(self):
         temp = self.get_temp()
