@@ -23,10 +23,13 @@ import glob
 import time
 from observable import Observable
 
+NUM_OF_TEMPS = 10
+
 class ThermometerSingleton(Observable):
 
     _instance = None
     running = False;
+    temperatures = []
 
     #singleton magic
     def __new__(cls, *args, **kwargs):
@@ -50,7 +53,7 @@ class ThermometerSingleton(Observable):
         return lines
 
     # code adapted from adafruit raspberry pi libraries
-    def get_temp(self):
+    def get_one_temp(self):
         lines = self.read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
             print 'Error reading temp'
@@ -62,6 +65,11 @@ class ThermometerSingleton(Observable):
             temp_c = float(temp_string) / 1000.0
             temp_f = temp_c * 9.0 / 5.0 + 32.0
             return temp_f
+
+    def get_temp(self):
+        self.temperatures.append(self.get_one_temp())
+        self.temperatures = self.temperatures[len(self.temperatures) - min(len(self.temperatures), NUM_OF_TEMPS):]
+        return sum(self.temperatures) / float(len(temperatures))
 
     def notify_observers(self):
         temp = self.get_temp()
