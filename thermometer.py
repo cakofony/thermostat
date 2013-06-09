@@ -23,7 +23,7 @@ import glob
 import time
 from observable import Observable
 
-NUM_OF_TEMPS = 10
+NUM_OF_TEMPS = 60
 
 class ThermometerSingleton(Observable):
 
