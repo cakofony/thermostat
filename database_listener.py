@@ -18,12 +18,15 @@ class DatabaseListener:
         self.DB_NAME = cfgparser.get('database', 'address')
         self.DB_USER = cfgparser.get('database', 'username')
         self.DB_PASS = cfgparser.get('database', 'password')
-        self.setup_db()
-        self.build_tables()
+        try:
+            self.setup_db()
+            self.build_tables()
+        except:
+            print 'failed to set up database'
 
     def setup_db(self):
         try:
-            self.engine = create_engine('mysql://%s:%s@%s?charset=utf8&use_unicode=0' % (self.DB_USER, self.DB_PASS, self.DB_NAME))
+            self.engine = create_engine('mysql://%s:%s@%s?charset=utf8&use_unicode=1' % (self.DB_USER, self.DB_PASS, self.DB_NAME))
             self.connection = self.engine.connect()
             self.meta = MetaData()
             self.meta.bind = self.connection
@@ -59,13 +62,22 @@ class DatabaseListener:
         return Table(table_name, self.meta, autoload=True)
 
     def update_temperature(self, temp):
-        self.engine.execute(self.temperature.insert(), temperature=temp)
+        try:
+            self.engine.execute(self.temperature.insert(), temperature=temp)
+        except:
+            print 'failed to write temp'
 
     def settings_changed(self, conf):
-        self.engine.execute(self.settings.insert(), min_temp=conf.mint, max_temp=conf.maxt, system=conf.system, fan=conf.fan)
+        try:
+            self.engine.execute(self.settings.insert(), min_temp=conf.mint, max_temp=conf.maxt, system=conf.system, fan=conf.fan)
+        except:
+            print 'failed to write settings'
 
     def update_active(self, result, heat, cool, fan):
-        self.engine.execute(self.climate.insert(), fan=fan, heat=heat, ac=cool)
+        try:
+            self.engine.execute(self.climate.insert(), fan=fan, heat=heat, ac=cool)
+        except:
+            print 'failed to write climate controller status'
 
 db = DatabaseListener()
 db.update_temperature(50.123)
