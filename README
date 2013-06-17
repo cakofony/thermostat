@@ -19,6 +19,6 @@ https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code
 
 
 to run:
-python controller.py
+python main.py
 
-This should start a webserver on port 5000
+This should start a webserver on port 80
