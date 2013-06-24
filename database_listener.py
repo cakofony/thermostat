@@ -6,23 +6,35 @@ import datetime
 import ConfigParser
 import sys
 
+DATABASE_CONFIG = 'database.cfg'
 
 TEMP_TABLE = 'temperature'
 SETTINGS_TABLE = 'settings'
 CLIMATE_CONTROL_TABLE = 'climatecontrol'
+
+
 class DatabaseListener:
 
     def __init__(self):
-        cfgparser = ConfigParser.ConfigParser()
-        cfgparser.readfp(open('database.cfg'))
-        self.DB_NAME = cfgparser.get('database', 'address')
-        self.DB_USER = cfgparser.get('database', 'username')
-        self.DB_PASS = cfgparser.get('database', 'password')
+        self.read_config()
         try:
             self.setup_db()
             self.build_tables()
-        except:
+        except Exception as ex:
+            print ex
             print 'failed to set up database'
+
+    def read_config(self):
+        try:
+            cfgparser = ConfigParser.ConfigParser()
+            f = open(DATABASE_CONFIG)
+            cfgparser.readfp(f)
+            self.DB_NAME = cfgparser.get('database', 'address')
+            self.DB_USER = cfgparser.get('database', 'username')
+            self.DB_PASS = cfgparser.get('database', 'password')
+            f.close()
+        except:
+            print 'Unable to read config file'
 
     def setup_db(self):
         try:
